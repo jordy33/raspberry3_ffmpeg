@@ -82,6 +82,91 @@ git clone --depth 1 https://chromium.googlesource.com/webm/libvpx ~/ffmpeg-libra
   && sudo make install
 ```
 
+We now need to compile the library called “AOM“.
+
+This library will allow us to add support for encoding to the AP1 video codec on your Raspberry Pi.
+
+```
+git clone --depth 1 https://aomedia.googlesource.com/aom ~/ffmpeg-libraries/aom \
+  && mkdir ~/ffmpeg-libraries/aom/aom_build \
+  && cd ~/ffmpeg-libraries/aom/aom_build \
+  && cmake -G "Unix Makefiles" AOM_SRC -DENABLE_NASM=on -DPYTHON_EXECUTABLE="$(which python3)" -DCMAKE_C_FLAGS="-mfpu=vfp -mfloat-abi=hard" .. \
+  && sed -i 's/ENABLE_NEON:BOOL=ON/ENABLE_NEON:BOOL=OFF/' CMakeCache.txt \
+  && make -j$(nproc) \
+  && sudo make install
+```
+
+The final library we need to compile is the “zimg” library.
+
+This library implements a range of image processing features, dealing with the basics of scaling, colorspace, and depth.
+
+Clone and compile the code by running the command below.
+```
+git clone https://github.com/sekrit-twc/zimg.git ~/ffmpeg-libraries/zimg \
+  && cd ~/ffmpeg-libraries/zimg \
+  && sh autogen.sh \
+  && ./configure \
+  && make \
+  && sudo make install
+```
+Now, run the command below to update the link cache.
+
+This command ensures we won’t run into linking issues because the compiler can’t find a library.
+```
+sudo ldconfig
+```
+We can finally compile FFmpeg on our Raspberry Pi.
+
+During the compilation, we will be enabling all the extra libraries that we compiled and installed in the previous two sections.
+
+We will also be enabling features that help with the Raspberry Pi, such as omx-rpi.
+
+Run the following command to compile everything. This command is reasonably large, as there is a considerable amount of features that we need to enable.
+```
+it clone --depth 1 https://github.com/FFmpeg/FFmpeg.git ~/FFmpeg \
+  && cd ~/FFmpeg \
+  && ./configure \
+    --extra-cflags="-I/usr/local/include" \
+    --extra-ldflags="-L/usr/local/lib" \
+    --extra-libs="-lpthread -lm -latomic" \
+    --arch=armel \
+    --enable-gmp \
+    --enable-gpl \
+    --enable-libaom \
+    --enable-libass \
+    --enable-libdav1d \
+    --enable-libdrm \
+    --enable-libfdk-aac \
+    --enable-libfreetype \
+    --enable-libkvazaar \
+    --enable-libmp3lame \
+    --enable-libopencore-amrnb \
+    --enable-libopencore-amrwb \
+    --enable-libopus \
+    --enable-librtmp \
+    --enable-libsnappy \
+    --enable-libsoxr \
+    --enable-libssh \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libzimg \
+    --enable-libwebp \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-libxml2 \
+    --enable-mmal \
+    --enable-nonfree \
+    --enable-omx \
+    --enable-omx-rpi \
+    --enable-version3 \
+    --target-os=linux \
+    --enable-pthreads \
+    --enable-openssl \
+    --enable-hardcoded-tables \
+  && make -j$(nproc) \
+  && sudo make install
+```
+
 Installing Dependencies
 ```
 sudo apt-get install gitk
