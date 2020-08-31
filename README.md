@@ -6,32 +6,11 @@ Update
 apt-get update
 apt-get upgrade
 ```
-###Language
+### Adjust language English and us keyboard
 ```
 piwiz
 ```
-Dependencies
 
-```
-sudo apt-get install gitk
-sudo apt-get install libiconv
-sudo apt-get install libic6
-sudo apt-get install libc6
-sudo apt-get install libiconv-dev
-sudo apt-get install libc6-dev
-sudo apt-get install clang
-sudo apt-get install libdvbcsa-dev
-sudo apt-get install dvb-apps
-git clone https://github.com/tvheadend/dtv-scan-tables.git
-cd dtv-scan-tables/
-make clean
-sudo make dvbv3
-sudo make install
-
-git clone https://github.com/tvheadend/tvheadend.git
-gitk --all
-git checkout 9874ab0b1d4a6752840a9a23bf7502c3e623825f
-```
 
 ### Install FFmpeg
 Now we need to install the packages that we need to compile FFmpeg and its additional libraries.
@@ -62,6 +41,70 @@ git clone --depth 1 https://github.com/mstorsjo/fdk-aac.git ~/ffmpeg-libraries/f
   && sudo make install
 ```
 
+The next library we are going to compile is the “dav1d” library.
+
+This library will add support for decoding the AV1 video format into FFmpeg. This codec is considered the successor of the VP9 codec and as a competitor to the x265 codec.
+
+Run the following command to compile and install the “dav1d” library to your Raspberry Pi.
+
+```
+git clone --depth 1 https://code.videolan.org/videolan/dav1d.git ~/ffmpeg-libraries/dav1d \
+  && mkdir ~/ffmpeg-libraries/dav1d/build \
+  && cd ~/ffmpeg-libraries/dav1d/build \
+  && meson .. \
+  && ninja \
+  && sudo ninja install
+```
+
+This library that we are going to compile next is an HEVC encoder called “kvazaar“.
+
+Using the following command, you can clone and compile the Kvazaar library on your Raspberry Pi.
+```
+git clone --depth 1 https://github.com/ultravideo/kvazaar.git ~/ffmpeg-libraries/kvazaar \
+  && cd ~/ffmpeg-libraries/kvazaar \
+  && ./autogen.sh \
+  && ./configure \
+  && make -j$(nproc) \
+  && sudo make install
+```
+
+We can now compile the library that we need for FFmpeg to be able to support the VP8 and VP9 video codecs on our Raspberry Pi.
+
+This library we are compiling is called LibVPX and is developed by Google.
+
+The following command will clone, configure, and compile the library to our Pi.
+
+```
+git clone --depth 1 https://chromium.googlesource.com/webm/libvpx ~/ffmpeg-libraries/libvpx \
+  && cd ~/ffmpeg-libraries/libvpx \
+  && ./configure --disable-examples --disable-tools --disable-unit_tests --disable-docs \
+  && make -j$(nproc) \
+  && sudo make install
+```
+
+Installing Dependencies
+```
+sudo apt-get install gitk
+sudo apt-get install libiconv
+sudo apt-get install libic6
+sudo apt-get install libc6
+sudo apt-get install libiconv-dev
+sudo apt-get install libc6-dev
+sudo apt-get install clang
+sudo apt-get install libdvbcsa-dev
+sudo apt-get install dvb-apps
+git clone https://github.com/tvheadend/dtv-scan-tables.git
+cd dtv-scan-tables/
+make clean
+sudo make dvbv3
+sudo make install
+```
+Installing Tvheadend
+```
+git clone https://github.com/tvheadend/tvheadend.git
+gitk --all
+git checkout 9874ab0b1d4a6752840a9a23bf7502c3e623825f
+```
 
 ### Configure Options
 ```
