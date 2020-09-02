@@ -189,6 +189,7 @@ Installing Tvheadend
 git clone https://github.com/tvheadend/tvheadend.git
 gitk --all
 git checkout 9874ab0b1d4a6752840a9a23bf7502c3e623825f
+git checkout d492091de8231ca25ac4b4f682da7d32f3d6f44f
 ```
 
 ### Configure Options
