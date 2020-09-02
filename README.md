@@ -195,7 +195,10 @@ git checkout 9874ab0b1d4a6752840a9a23bf7502c3e623825f
 ```
  ./configure --enable-dvbcsa --enable-constcw  --enable-bundle --disable-ffmpeg_static
 ```
-
+### Set library PATH
+```
+export LIBRARY_PATH=/opt/vc/lib
+```
 ### Package
 ```
 AUTOBUILD_CONFIGURE_EXTRA="--enable-dvbcsa --enable-constcw  --enable-bundle --disable-ffmpeg_static" ./Autobuild.sh -t debian
