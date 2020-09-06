@@ -166,4 +166,23 @@ it clone --depth 1 https://github.com/FFmpeg/FFmpeg.git ~/FFmpeg \
   && make -j$(nproc) \
   && sudo make install
 ```
+IP config in adapters
+Raspberry pi:
+```
+ sudo vim /etc/rc.local
+```
+Insert the following
+```
+sudo ifconfig eth0 10.0.0.1 netmask 255.255.255.0 up
+```
+
+Openelec
+```
+nano /storage/.config/autostart.sh
+```
+
+Insert the following:
+```
+ifconfig eth0 10.0.0.2 netmask 255.255.255.0 up
+```
 
